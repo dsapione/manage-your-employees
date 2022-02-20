@@ -10,7 +10,17 @@ const db = mysql.createConnection(
     password: 'Hit me with your best shot',
     database: 'tracker'
   },
-  console.log('Connected to the tracker database.')
+  console.log(`
+	╔╦╗╔═╗╔╗╔╔═╗╔═╗╔═╗         
+	║║║╠═╣║║║╠═╣║ ╦║╣          
+	╩ ╩╩ ╩╝╚╝╩ ╩╚═╝╚═╝
+	╦ ╦╔═╗╦ ╦╦═╗               
+	╚╦╝║ ║║ ║╠╦╝               
+	 ╩ ╚═╝╚═╝╩╚═               
+	╔═╗╔╦╗╔═╗╦  ╔═╗╦ ╦╔═╗╔═╗╔═╗
+	║╣ ║║║╠═╝║  ║ ║╚╦╝║╣ ║╣ ╚═╗
+	╚═╝╩ ╩╩  ╩═╝╚═╝ ╩ ╚═╝╚═╝╚═╝
+	`)
 );
 
 module.exports = db;
