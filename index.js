@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 const db = require('./db/connection');
+const { restoreDefaultPrompts } = require('inquirer');
 
 const callQuestion = () => {
 	inquirer.prompt({
@@ -24,7 +25,7 @@ const callQuestion = () => {
 		} else if (action === 'View All Departments') {
 			viewDepartments();
 		} else if (action === 'Quit') {
-			return;
+			// return;
 		}
 	})
 }
@@ -105,10 +106,10 @@ const addDepartment = () => {
 		db.query(sql, params, (err, result) => {
 			if (err) {
 				return err;
-			} 
+			}
 			console.log(`Added ${answers.department} to the database`);		
+			callQuestion();
 		});
-		callQuestion();
 	});
 };
 
@@ -123,8 +124,8 @@ const addRole = () => {
 				return err;
 			} 
 			console.log(`Added ${answers.role} to the database`);				
+			callQuestion();
 		});
-		callQuestion();
 	});
 };
 
@@ -139,8 +140,8 @@ const addEmployee = () => {
 				return err;
 			} 
 			console.log(`Added ${answers.firstName, answers.lastName} to the database`);				
+			callQuestion();
 		});
-		callQuestion();
 	});
 };
 
@@ -155,8 +156,8 @@ const updateEmployeeRole = () => {
 				return err;
 			} 
 			console.log(`Updated employee's role`);				
+			callQuestion();
 		});
-		callQuestion();
 	});
 };
 
@@ -164,24 +165,24 @@ const viewEmployees = () => {
 	const sql = `SELECT * FROM employee`;
   db.query(sql, (err, employees) => {
 		console.table(employees)
+		callQuestion();
   });
-	callQuestion();
 };
 
 const viewRoles = () => {
 	const sql = `SELECT * FROM role`;
   db.query(sql, (err, roles) => {
 		console.table(roles)
+		callQuestion();
   });
-	callQuestion();
 };
 
 const viewDepartments = () => {
 	const sql = `SELECT * FROM department`;
   db.query(sql, (err, departments) => {
 		console.table(departments)
+		callQuestion();
   });
-	callQuestion();
 };
 
 // Function call to initialize app
