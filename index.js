@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
+const db = require('./db/connection');
 
 const callQuestion = () => {
 	inquirer.prompt({
@@ -31,7 +32,7 @@ const callQuestion = () => {
 const departmentQuestions = [
 	{
 		type: 'input',
-		name: 'title',
+		name: 'department',
 		message: "What is the name of the department?"
 	}
 ];
@@ -39,127 +40,149 @@ const departmentQuestions = [
 const roleQuestions = [
 	{
 		type: 'input',
-		name: 'title',
+		name: 'role',
 		message: "What is the name of the role?"
 	},
 	{
 		type: 'number',
-		name: 'title',
+		name: 'salary',
 		message: "What is the salary of the role?"
 	},
 	{
-		type: 'input',
-		name: 'title',
-		message: "Which department does the role belong to?"
+		type: 'list',
+		name: 'departmentRole',
+		message: "Which department does the role belong to?",
+		// choices: [different departments from sql]
 	}
 ];
 
 const employeeQuestions = [
 	{
 		type: 'input',
-		name: 'title',
+		name: 'firstName',
 		message: "What is the employee's first name?"
 	},
 	{
 		type: 'input',
-		name: 'title',
+		name: 'lastName',
 		message: "What is the employee's last name?"
 	},
 	{
-		type: 'input',
-		name: 'title',
-		message: "What is the employee's role?"
+		type: 'list',
+		name: 'employeeRole',
+		message: "What is the employee's role?",
+		// choices: [different titles from sql]
 	},
 	{
-		type: 'input',
-		name: 'title',
-		message: "Who is the employee's manager?"
+		type: 'list',
+		name: 'manager',
+		message: "Who is the employee's manager?",
+		// choices: [current employees names from sql]
 	}
 ];
 
 const updateEmployeeRoleQuestions = [
 	{
-		type: 'input',
-		name: 'title',
-		message: "Which employee's role do you want to update?"
+		type: 'list',
+		name: 'employeeName',
+		message: "Which employee's role do you want to update?",
+		// choices: [current employee names from sql]
 	},
 	{
-		type: 'input',
-		name: 'title',
-		message: "What role do you want to assign to the selected employee?"
+		type: 'list',
+		name: 'employeeRoleUpdate',
+		message: "What role do you want to assign to the selected employee?",
+		// choices: [different titles from sql]
 	}
 ];
 
 const addDepartment = () => {
 	inquirer.prompt(departmentQuestions).then(answers => {
-		// sql code
+		const sql = `INSERT INTO department (name)
+		VALUES (?)`;
+		const params = [answers.department];
+
+		db.query(sql, params, (err, result) => {
+			if (err) {
+				return err;
+			} 
+			console.log(`Added ${answers.department} to the database`);		
+		});
 		callQuestion();
-	})
+	});
 };
 
 const addRole = () => {
 	inquirer.prompt(roleQuestions).then(answers => {
-		// sql code
+		const sql = `INSERT INTO role (title, salary, department_id)
+		VALUES (?,?,?)`;
+		const params = [answers.role, answers.salary, answers.departmentRole];
+
+		db.query(sql, params, (err, result) => {
+			if (err) {
+				return err;
+			} 
+			console.log(`Added ${answers.role} to the database`);				
+		});
 		callQuestion();
-	})
+	});
 };
 
 const addEmployee = () => {
 	inquirer.prompt(employeeQuestions).then(answers => {
-		// sql code
+		const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+		VALUES (?,?,?,?)`;
+		const params = [answers.firstName, answers.lastName, answers.employeeRole, answers.manager];
+
+		db.query(sql, params, (err, result) => {
+			if (err) {
+				return err;
+			} 
+			console.log(`Added ${answers.firstName, answers.lastName} to the database`);				
+		});
 		callQuestion();
-	})
+	});
 };
 
 const updateEmployeeRole = () => {
 	inquirer.prompt(updateEmployeeRoleQuestions).then(answers => {
-		// sql code
+		const sql = `UPDATE employee SET role_id = ?
+								WHERE id = ?`;
+		const params = [answers.employeeRoleUpdate, answers.employeeName];
+
+		db.query(sql, params, (err, result) => {
+			if (err) {
+				return err;
+			} 
+			console.log(`Updated employee's role`);				
+		});
 		callQuestion();
-	})
+	});
 };
 
-const questions = [
+const viewEmployees = () => {
+	const sql = `SELECT * FROM employee`;
+  db.query(sql, (err, employees) => {
+		console.table(employees)
+  });
+	callQuestion();
+};
 
-	{
-		type: 'input',
-		name: 'title',
-		message: "What would you like to do?"
-	},
-	{
-		type: 'input',
-		name: 'email',
-		message: 'What is your email?'
-	},
-	{
-		type: 'input',
-		name: 'github',
-		message: 'What is your GitHub username?'
-	},
-	{
-		type: 'input',
-		name: 'description',
-		message: 'Please write a brief description of your project.'
-	},
-	{
-		type: 'confirm',
-		name: 'confirmAbout',
-		message: 'Will this project have a license?',
-		default: true
-	},
-	{
-		type: 'list',
-		name: 'license',
-		message: 'What license will be used?',
-		choices: ['MIT', 'ISC', 'Apache'],
-		when: ({ confirmAbout }) => {
-			if (confirmAbout) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	},
-]
+const viewRoles = () => {
+	const sql = `SELECT * FROM role`;
+  db.query(sql, (err, roles) => {
+		console.table(roles)
+  });
+	callQuestion();
+};
+
+const viewDepartments = () => {
+	const sql = `SELECT * FROM department`;
+  db.query(sql, (err, departments) => {
+		console.table(departments)
+  });
+	callQuestion();
+};
 
 // Function call to initialize app
 callQuestion();
