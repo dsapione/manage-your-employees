@@ -1,8 +1,8 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 const db = require('./db/connection');
-const { restoreDefaultPrompts } = require('inquirer');
 
+// initial question for the app.
 const callQuestion = () => {
 	inquirer.prompt({
 		type: 'list',
@@ -25,11 +25,12 @@ const callQuestion = () => {
 		} else if (action === 'View All Departments') {
 			viewDepartments();
 		} else if (action === 'Quit') {
-			// return;
+			return;
 		}
 	})
 }
 
+// questions for addidng department
 const departmentQuestions = [
 	{
 		type: 'input',
@@ -38,6 +39,7 @@ const departmentQuestions = [
 	}
 ];
 
+// questions for addidng role
 const roleQuestions = [
 	{
 		type: 'input',
@@ -57,6 +59,7 @@ const roleQuestions = [
 	}
 ];
 
+// questions for addidng employee
 const employeeQuestions = [
 	{
 		type: 'input',
@@ -82,6 +85,7 @@ const employeeQuestions = [
 	}
 ];
 
+// questions for updating employee role
 const updateEmployeeRoleQuestions = [
 	{
 		type: 'list',
@@ -97,6 +101,7 @@ const updateEmployeeRoleQuestions = [
 	}
 ];
 
+// adds depatment to department table in sql
 const addDepartment = () => {
 	inquirer.prompt(departmentQuestions).then(answers => {
 		const sql = `INSERT INTO department (name)
@@ -113,6 +118,7 @@ const addDepartment = () => {
 	});
 };
 
+// adds role to the role table in sql
 const addRole = () => {
 	inquirer.prompt(roleQuestions).then(answers => {
 		const sql = `INSERT INTO role (title, salary, department_id)
@@ -129,6 +135,7 @@ const addRole = () => {
 	});
 };
 
+// adds employee to employee table in sql
 const addEmployee = () => {
 	inquirer.prompt(employeeQuestions).then(answers => {
 		const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
@@ -145,6 +152,7 @@ const addEmployee = () => {
 	});
 };
 
+// updates employee role in sql
 const updateEmployeeRole = () => {
 	inquirer.prompt(updateEmployeeRoleQuestions).then(answers => {
 		const sql = `UPDATE employee SET role_id = ?
@@ -161,6 +169,7 @@ const updateEmployeeRole = () => {
 	});
 };
 
+// prints employee table from schema.sql
 const viewEmployees = () => {
 	const sql = `SELECT * FROM employee`;
   db.query(sql, (err, employees) => {
@@ -169,6 +178,7 @@ const viewEmployees = () => {
   });
 };
 
+// prints role table from schema.sql
 const viewRoles = () => {
 	const sql = `SELECT * FROM role`;
   db.query(sql, (err, roles) => {
@@ -177,6 +187,7 @@ const viewRoles = () => {
   });
 };
 
+// prints department table from schema.sql
 const viewDepartments = () => {
 	const sql = `SELECT * FROM department`;
   db.query(sql, (err, departments) => {
