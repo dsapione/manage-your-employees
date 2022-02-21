@@ -25,7 +25,7 @@ const callQuestion = () => {
 		} else if (action === 'View All Departments') {
 			viewDepartments();
 		} else if (action === 'Quit') {
-			return;
+			process.exit();
 		}
 	})
 }
@@ -36,68 +36,6 @@ const departmentQuestions = [
 		type: 'input',
 		name: 'department',
 		message: "What is the name of the department?"
-	}
-];
-
-// questions for addidng role
-const roleQuestions = [
-	{
-		type: 'input',
-		name: 'role',
-		message: "What is the name of the role?"
-	},
-	{
-		type: 'number',
-		name: 'salary',
-		message: "What is the salary of the role?"
-	},
-	{
-		type: 'list',
-		name: 'departmentRole',
-		message: "Which department does the role belong to?",
-		// choices: [different departments from sql]
-	}
-];
-
-// questions for addidng employee
-const employeeQuestions = [
-	{
-		type: 'input',
-		name: 'firstName',
-		message: "What is the employee's first name?"
-	},
-	{
-		type: 'input',
-		name: 'lastName',
-		message: "What is the employee's last name?"
-	},
-	{
-		type: 'list',
-		name: 'employeeRole',
-		message: "What is the employee's role?",
-		// choices: [different titles from sql]
-	},
-	{
-		type: 'list',
-		name: 'manager',
-		message: "Who is the employee's manager?",
-		// choices: [current employees names from sql]
-	}
-];
-
-// questions for updating employee role
-const updateEmployeeRoleQuestions = [
-	{
-		type: 'list',
-		name: 'employeeName',
-		message: "Which employee's role do you want to update?",
-		// choices: [current employee names from sql]
-	},
-	{
-		type: 'list',
-		name: 'employeeRoleUpdate',
-		message: "What role do you want to assign to the selected employee?",
-		// choices: [different titles from sql]
 	}
 ];
 
@@ -119,8 +57,30 @@ const addDepartment = () => {
 };
 
 // adds role to the role table in sql
-const addRole = () => {
-	inquirer.prompt(roleQuestions).then(answers => {
+const addRole = async () => {
+	const [departments] = await	db.promise().query(`SELECT * FROM department`)
+		const deptArray = departments.map(({id, name}) => ({
+		name: name,
+		value: id
+	})); 
+	inquirer.prompt([
+		{
+			type: 'input',
+			name: 'role',
+			message: "What is the name of the role?"
+		},
+		{
+			type: 'number',
+			name: 'salary',
+			message: "What is the salary of the role?"
+		},
+		{
+			type: 'list',
+			name: 'departmentRole',
+			message: "Which department does the role belong to?",
+			choices: deptArray
+		}
+	]).then(answers => {
 		const sql = `INSERT INTO role (title, salary, department_id)
 		VALUES (?,?,?)`;
 		const params = [answers.role, answers.salary, answers.departmentRole];
@@ -136,8 +96,43 @@ const addRole = () => {
 };
 
 // adds employee to employee table in sql
-const addEmployee = () => {
-	inquirer.prompt(employeeQuestions).then(answers => {
+const addEmployee = async () => {
+	const [roles] = await db.promise().query(`SELECT * FROM role`)
+	const [employees] = await db.promise().query(`SELECT * FROM employee`)
+
+	const roleArray = roles.map(({id, title}) => ({
+		name: title,
+		value: id
+	}));
+	const employeeArray = employees.map(({id, first_name, last_name}) => ({
+		name: first_name + ' ' + last_name,
+		value: id
+	}));
+
+	inquirer.prompt([
+		{
+			type: 'input',
+			name: 'firstName',
+			message: "What is the employee's first name?"
+		},
+		{
+			type: 'input',
+			name: 'lastName',
+			message: "What is the employee's last name?"
+		},
+		{
+			type: 'list',
+			name: 'employeeRole',
+			message: "What is the employee's role?",
+			choices: roleArray
+		},
+		{
+			type: 'list',
+			name: 'manager',
+			message: "Who is the employee's manager?",
+			choices: employeeArray
+		}
+	]).then(answers => {
 		const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
 		VALUES (?,?,?,?)`;
 		const params = [answers.firstName, answers.lastName, answers.employeeRole, answers.manager];
@@ -153,8 +148,32 @@ const addEmployee = () => {
 };
 
 // updates employee role in sql
-const updateEmployeeRole = () => {
-	inquirer.prompt(updateEmployeeRoleQuestions).then(answers => {
+const updateEmployeeRole = async () => {
+	const [roles] = await db.promise().query(`SELECT * FROM role`)
+	const [employees] = await db.promise().query(`SELECT * FROM employee`)
+
+	const roleArray = roles.map(({id, title}) => ({
+		name: title,
+		value: id
+	}));
+	const employeeArray = employees.map(({id, first_name, last_name}) => ({
+		name: first_name + ' ' + last_name,
+		value: id
+	}));
+	inquirer.prompt([
+		{
+			type: 'list',
+			name: 'employeeName',
+			message: "Which employee's role do you want to update?",
+			choices: employeeArray
+		},
+		{
+			type: 'list',
+			name: 'employeeRoleUpdate',
+			message: "What role do you want to assign to the selected employee?",
+			choices: roleArray
+		}
+	]).then(answers => {
 		const sql = `UPDATE employee SET role_id = ?
 								WHERE id = ?`;
 		const params = [answers.employeeRoleUpdate, answers.employeeName];
