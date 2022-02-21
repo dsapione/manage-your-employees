@@ -190,8 +190,9 @@ const updateEmployeeRole = async () => {
 
 // prints employee table from schema.sql
 const viewEmployees = () => {
-	const sql = `SELECT * FROM employee`;
+	const sql = `SELECT employee.id, CONCAT(employee.first_name, ' ', employee.last_name) AS name, role.title AS title,department.name AS department, role.salary AS salary, manager.first_name AS manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee AS manager on employee.manager_id = manager.id`;
   db.query(sql, (err, employees) => {
+		console.log(err)
 		console.table(employees)
 		callQuestion();
   });

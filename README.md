@@ -1,6 +1,6 @@
 # Manage Your Employee's
 
-[![walkthrough video](./assets/images/screenshot.jpg)](https://watch.screencastify.com/v/Wc8JPcpfgMPFUpzFmwBu)
+[![walkthrough video](./assets/images/screenshot.jpg)](https://drive.google.com/file/d/1mevoH3Rfgd7lDWAJ-M5jIsIN4wlveu1N)
 
 ## Description
 
