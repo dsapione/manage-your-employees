@@ -1,6 +1,6 @@
 # Manage Your Employee's
 
-[![walkthrough video](./assets/images/screenshot.jpg)](https://drive.google.com/file/d/1mevoH3Rfgd7lDWAJ-M5jIsIN4wlveu1N)
+[![walkthrough video](./assets/images/screenshot.jpg)](https://drive.google.com/file/d/177_UEKcD9laeOxHRGnAb7DjbPEBNpO9P/view)
 
 ## Description
 
